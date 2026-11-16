@@ -1,0 +1,49 @@
+diff --git a/docs/DEVICE_PROFILES.md b/docs/DEVICE_PROFILES.md
+index 29106e3..10f1ffe 100644
+--- a/docs/DEVICE_PROFILES.md
++++ b/docs/DEVICE_PROFILES.md
+@@ -61,6 +61,7 @@ owner firmware at or above 2.0.9.7.
+ | T8416   | 104   | camera  | indoor           | h3-or-standalone   | h3          | h3          | h3          | [Evidence](INDOOR.md)             |
+ | T8417   | 105   | camera  | indoor           | h3-or-standalone   | h3          | h3          | h3          | [Evidence](INDOOR.md)             |
+ | T817L   | 10031 | camera  | indoor           | h3-or-standalone   | h3          | h3          | h3          | [Evidence](INDOOR.md)             |
++| T8W11C  | 10010 | camera  | indoor           | h3-or-standalone   | h3          | h3          | h3          | [Evidence](INDOOR.md)             |
+ | T8030   | 18    | station | homebase         | owner              | blocked     | blocked     | blocked     | [Evidence](DISCOVERY.md)          |
+ | T86P2   | 111   | camera  | lte              | h3-or-standalone   | h3          | h3          | h3          | [Evidence](LTE.md)                |
+ | T8111   | 1     | camera  | eufycam          | h3                 | h3          | h3          | h3          | [Evidence](EUFYCAM.md)            |
+diff --git a/src/device-profiles.ts b/src/device-profiles.ts
+index 6bc98a5..963b657 100644
+--- a/src/device-profiles.ts
++++ b/src/device-profiles.ts
+@@ -91,6 +91,8 @@ export const deviceProfiles: Readonly<Record<string, DeviceProfile>> = Object.fr
+   T8417: camera(105, 'indoor', 'h3-or-standalone', h3Media),
+   // ha-eufy-cam#136: Wired Cam C31, reported as T817L/10031 under a T8030. Only this exact pair.
+   T817L: camera(10031, 'indoor', 'h3-or-standalone', h3Media),
++  // Fork: Indoor Cam C220 (T8W11C/10010) under a T8030 (HomeBase 3 fw 3.8.8.0, cam fw 2.2.1.7).
++  T8W11C: camera(10010, 'indoor', 'h3-or-standalone', h3Media),
+   T8030: Object.freeze({
+     type: 18,
+     kind: 'station',
+diff --git a/test/fixtures/device-profile-baseline.mjs b/test/fixtures/device-profile-baseline.mjs
+index e62acf4..fba1284 100644
+--- a/test/fixtures/device-profile-baseline.mjs
++++ b/test/fixtures/device-profile-baseline.mjs
+@@ -60,6 +60,7 @@ export const profileBaseline = [
+   ['T8424', 39, 'camera', 'floodlight', true, false, 'blocked'],
+   // Added for ha-eufy-cam#136.
+   ['T817L', 10031, 'camera', 'indoor', true, true, 'h3'],
++  ['T8W11C', 10010, 'camera', 'indoor', true, true, 'h3'],
+   // Reported in ha-eufy-cam#149 on 2026-10-09. Additional-H3 media, not established.
+   ['T8160-C', 19, 'camera', '', false, true, 'h3'],
+   // Added on 2026-10-12 for ha-eufy-cam#149 from public T8410C type 31 evidence.
+diff --git a/test/fixtures/indoor-media.mjs b/test/fixtures/indoor-media.mjs
+index 0075eda..1f3aefd 100644
+--- a/test/fixtures/indoor-media.mjs
++++ b/test/fixtures/indoor-media.mjs
+@@ -13,6 +13,7 @@ export const indoorMedia = [
+   ['T8416', 104, 'indoor-h3'],
+   ['T8417', 105, 'doorbell'],
+   ['T817L', 10031, 'indoor-h3'],
++  ['T8W11C', 10010, 'indoor-h3'],
+ ].map(([model, type, liveEnvelope]) => ({
+   id: `indoor-${model}-h3`,
+   family: 'indoor',

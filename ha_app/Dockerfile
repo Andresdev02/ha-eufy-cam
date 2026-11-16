@@ -1,6 +1,7 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package*.json ./
+COPY vendor ./vendor
 RUN npm ci --ignore-scripts
 COPY tsconfig.json ./
 COPY src ./src
